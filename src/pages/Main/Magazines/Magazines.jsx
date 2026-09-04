@@ -43,47 +43,50 @@ const Magazines = () => {
 
   const columns = [
     {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
-      render: (code , record) => (
+      title: "Cover",
+      dataIndex: "coverImage",
+      key: "coverImage",
+      render: (coverImage, record) => (
         <div className="flex">
           <div
-            title={record.expireDate && new Date(record.expireDate) < new Date() ? 'expired' : record.status}
-            className={`w-2 h-6 me-2 rounded-md ${record.expireDate && new Date(record.expireDate) < new Date()
-              ? "bg-gray-500"
-              : record.status === "active"
-                ? "bg-green-500"
-                : "bg-red-500"
-              }`}
+            title={record.isActive ? "active" : "inactive"}
+            className={`w-1 me-2 rounded-md ${record.isActive ? "bg-green-500" : "bg-red-500"}`}
           ></div>
-          {code || "N/A"}
+          <div>
+            <img
+              className="aspect-[3/4] w-14 object-cover"
+              src={`${import.meta.env.VITE_IMAGE_URL}/${coverImage}`}
+              alt={record.title || "Magazine cover"}
+            />
+          </div>
         </div>
       ),
     },
     {
-      title: "Value",
-      dataIndex: "value",
-      key: "value",
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
       render: (value) => value === 0 ? 0 : value || "N/A",
     },
     {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      render: (type) => type || "N/A",
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      render: (value) => value || "N/A",
     },
     {
-      title: "Usage Count",
-      dataIndex: "usageCount",
-      key: "usageCount",
-      render: (usageCount) => usageCount === 0 ? 0 : usageCount || "N/A",
+      title: "Price",
+      dataIndex: "pricing",
+      key: "pricing",
+      render: (pricing = []) => pricing.length
+        ? pricing.map(({ country, currency, price }) => `${country}: ${currency} ${price}`).join(", ")
+        : "N/A",
     },
     {
-      title: "Ex. Date",
-      dataIndex: "expireDate",
-      key: "expireDate",
-      render: (expireDate) => new Date(expireDate).toLocaleDateString() || "N/A",
+      title: "Created",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt) => createdAt ? new Date(createdAt).toLocaleDateString() : "N/A",
     },
     {
       title: "Action",
@@ -123,11 +126,14 @@ const Magazines = () => {
     setModalData(record);
     setIsModalOpen(true);
     modalForm.setFieldsValue({
-      code: record.code || "",
-      value: record.value ?? 0,
-      type: record.type || "",
-      usageCount: record.usageCount ?? 0,
-      expireDate: record.expireDate ? record.expireDate.split('T')[0] : "",
+      title: record.title || "",
+      slug: record.slug || "",
+      description: record.description || "",
+      coverImage: record.coverImage || "",
+      isActive: record.isActive ?? true,
+      pricing: record.pricing?.length
+        ? record.pricing
+        : [{ country: "", currency: "", price: 0 }],
     });
   };
 
@@ -135,10 +141,10 @@ const Magazines = () => {
     try {
       if (modalData._id) {
         await updateMagazine({ id: modalData._id, payload: values });
-        toast.success("Magazine code updated successfully.");
+        toast.success("Magazine updated successfully.");
       } else {
         await storeMagazine(values);
-        toast.success("Magazine code added successfully.");
+        toast.success("Magazine added successfully.");
       }
       setIsModalOpen(false);
     } catch (error) {
@@ -155,7 +161,7 @@ const Magazines = () => {
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "Do you want to delete this magazine code?",
+      text: "Do you want to delete this magazine?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
@@ -164,7 +170,7 @@ const Magazines = () => {
     if (!result.isConfirmed) return;
     try {
       await deleteMagazine({ id });
-      toast.success("Magazine code deleted successfully.");
+      toast.success("Magazine deleted successfully.");
       setCurrentPage(1);
     } catch (error) {
       Swal.fire({
@@ -182,7 +188,7 @@ const Magazines = () => {
       <LoaderWraperComp isError={isError} isLoading={isLoading}>
         <div className="flex gap-2 bg-4">
           <div className="p-2 flex-1 flex justify-between items-center">
-            <PageHeading title={"All Magazine's List"} disbaledBackBtn={true} />
+            <PageHeading title={"All Magazines"} disbaledBackBtn={true} />
 
             <Form
               form={form}
@@ -203,7 +209,7 @@ const Magazines = () => {
 
               <Form.Item name="keyword" className="mb-0">
                 <Input
-                  placeholder="Magazine code"
+                  placeholder="Magazine title"
                   className="focus:outline-none outline-none placeholder:text-[#222222] px-3.5 text-sm w-[170px]"
                   allowClear
                   onPressEnter={() => form.submit()}
@@ -252,7 +258,7 @@ const Magazines = () => {
         <DashboardModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen}>
           <div className="flex flex-col justify-between text-base">
             <div className="space-y-7">
-              <h6 className="font-medium text-center text-xl pb-1">Magazine Code</h6>
+              <h6 className="font-medium text-center text-xl pb-1">Magazine</h6>
               <Form
                 form={modalForm}
                 name="edit_magazine"
@@ -261,56 +267,60 @@ const Magazines = () => {
                 onFinish={onFinish}
                 className="space-y-[24px]"
               >
-                <Form.Item name="code" label="Code" rules={[{ required: true }]}> 
-                  <Input
-                    size="large"
-                    className=""
-                    placeholder="Enter magazine code"
-                  />
+                <Form.Item name="title" label="Title" rules={[{ required: true }]}>
+                  <Input size="large" placeholder="Enter magazine title" />
                 </Form.Item>
-                <Form.Item name="value" label="Value" rules={[{ required: true, type: "number", message: "Value is required" }]}> 
-                  <InputNumber
-                    size="large"
-                    className="w-full"
-                    placeholder="Enter value"
-                    min={0}
-                  />
+                <Form.Item name="slug" label="Slug" rules={[{ required: true }]}>
+                  <Input size="large" placeholder="Enter magazine slug" />
                 </Form.Item>
-                <Form.Item name="type" label="Type" rules={[{ required: true }]}> 
-                  <Select
-                    size="middle"
-                    className="w-full h-10"
-                    placeholder="Select type"
-                    options={[
-                      { label: "Percent", value: "percent" },
-                      { label: "Fixed", value: "fixed" },
-                    ]}
-                  />
+                <Form.Item name="description" label="Description" rules={[{ required: true }]}>
+                  <Input.TextArea rows={3} placeholder="Enter magazine description" />
                 </Form.Item>
-                <Form.Item name="expireDate" label="Expire Date" rules={[{ required: true, message: "Expire Date is required" }]}> 
-                  <Input
-                    size="large"
-                    className=""
-                    type="date"
-                    placeholder="Select expire date"
-                  />
+                <Form.Item name="coverImage" label="Cover image" rules={[{ required: true }]}>
+                  <Input size="large" placeholder="Enter cover image path" />
                 </Form.Item>
-                <Form.Item name="status" label="Status" rules={[{ required: true }]}> 
+                <Form.Item name="isActive" label="Status" rules={[{ required: true }]}>
                   <Select
                     size="middle"
                     className="w-full h-10"
                     placeholder="Select status"
                     options={[
-                      { label: "Active", value: "active" },
-                      { label: "Inactive", value: "inactive" },
+                      { label: "Active", value: true },
+                      { label: "Inactive", value: false },
                     ]}
                   />
                 </Form.Item>
+                <Form.List name="pricing">
+                  {(fields, { add, remove }) => (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">Pricing</span>
+                        <Button type="dashed" onClick={() => add({ country: "", currency: "", price: 0 })}>
+                          Add price
+                        </Button>
+                      </div>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <div key={key} className="flex items-start gap-2">
+                          <Form.Item {...restField} name={[name, "country"]} rules={[{ required: true }]} className="mb-0 flex-1">
+                            <Input placeholder="Country" />
+                          </Form.Item>
+                          <Form.Item {...restField} name={[name, "currency"]} rules={[{ required: true }]} className="mb-0 flex-1">
+                            <Input placeholder="Currency" />
+                          </Form.Item>
+                          <Form.Item {...restField} name={[name, "price"]} rules={[{ required: true, type: "number" }]} className="mb-0 flex-1">
+                            <InputNumber min={0} className="w-full" placeholder="Price" />
+                          </Form.Item>
+                          {fields.length > 1 && <Button type="text" danger onClick={() => remove(name)}>Remove</Button>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Form.List>
                 <Form.Item>
                   <Button
                     size="large"
                     htmlType="submit"
-                    className="w-full bg-s-1 text-white rounded-full"
+                    className="w-full bg-s-1 text-white"
                     loading={isLoading}
                   >
                     Submit
