@@ -5,18 +5,18 @@ import { IoSearch } from "react-icons/io5";
 import PageHeading from "../../../Components/PageHeading";
 
 import {
-  useDeletePromoMutation,
-  useGetAllPromosQuery,
-  useStorePromoMutation,
-  useUpdatePromoMutation,
-} from "../../../redux/features/promos/promosApi";
+  useDeleteMagazineMutation,
+  useGetAllMagazinesQuery,
+  useStoreMagazineMutation,
+  useUpdateMagazineMutation,
+} from "../../../redux/features/magazine/magazinesApi";
 import DashboardModal from "../../../Components/DashboardModal";
 import { FaPlus, FaTrash, FaEdit } from "react-icons/fa";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import LoaderWraperComp from "../../../Components/LoaderWraperComp";
 
-const Promos = () => {
+const Magazines = () => {
   const [form] = Form.useForm();
   const [modalForm] = Form.useForm();
 
@@ -28,17 +28,17 @@ const Promos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
 
-  const [storePromo] = useStorePromoMutation();
-  const [updatePromo] = useUpdatePromoMutation();
-  const [deletePromo] = useDeletePromoMutation();
+  const [storeMagazine] = useStoreMagazineMutation();
+  const [updateMagazine] = useUpdateMagazineMutation();
+  const [deleteMagazine] = useDeleteMagazineMutation();
 
-  // Fetch promos using searchQuery and currentPage
-  const { data: response, isLoading, isError } = useGetAllPromosQuery({
+  // Fetch magazines using searchQuery and currentPage
+  const { data: response, isLoading, isError } = useGetAllMagazinesQuery({
     page: currentPage,
     ...searchQuery,
   });
 
-  const promos = response?.data || [];
+  const magazines = response?.data || [];
   const pagination = response?.pagination || {};
 
   const columns = [
@@ -134,11 +134,11 @@ const Promos = () => {
   const onFinish = async (values) => {
     try {
       if (modalData._id) {
-        await updatePromo({ id: modalData._id, payload: values });
-        toast.success("Promo code updated successfully.");
+        await updateMagazine({ id: modalData._id, payload: values });
+        toast.success("Magazine code updated successfully.");
       } else {
-        await storePromo(values);
-        toast.success("Promo code added successfully.");
+        await storeMagazine(values);
+        toast.success("Magazine code added successfully.");
       }
       setIsModalOpen(false);
     } catch (error) {
@@ -155,7 +155,7 @@ const Promos = () => {
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "Do you want to delete this promo code?",
+      text: "Do you want to delete this magazine code?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
@@ -163,8 +163,8 @@ const Promos = () => {
     });
     if (!result.isConfirmed) return;
     try {
-      await deletePromo({ id });
-      toast.success("Promo code deleted successfully.");
+      await deleteMagazine({ id });
+      toast.success("Magazine code deleted successfully.");
       setCurrentPage(1);
     } catch (error) {
       Swal.fire({
@@ -182,7 +182,7 @@ const Promos = () => {
       <LoaderWraperComp isError={isError} isLoading={isLoading}>
         <div className="flex gap-2 bg-4">
           <div className="p-2 flex-1 flex justify-between items-center">
-            <PageHeading title={"Pricing & Promo codes"} disbaledBackBtn={true} />
+            <PageHeading title={"All Magazine's List"} disbaledBackBtn={true} />
 
             <Form
               form={form}
@@ -203,7 +203,7 @@ const Promos = () => {
 
               <Form.Item name="keyword" className="mb-0">
                 <Input
-                  placeholder="Promo code"
+                  placeholder="Magazine code"
                   className="focus:outline-none outline-none placeholder:text-[#222222] px-3.5 text-sm w-[170px]"
                   allowClear
                   onPressEnter={() => form.submit()}
@@ -235,7 +235,7 @@ const Promos = () => {
 
         <Table
           columns={columns}
-          dataSource={promos}
+          dataSource={magazines}
           rowKey={(record) => record._id}
           pagination={{
             current: pagination.currentPage || currentPage,
@@ -252,10 +252,10 @@ const Promos = () => {
         <DashboardModal setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen}>
           <div className="flex flex-col justify-between text-base">
             <div className="space-y-7">
-              <h6 className="font-medium text-center text-xl pb-1">Promo Code</h6>
+              <h6 className="font-medium text-center text-xl pb-1">Magazine Code</h6>
               <Form
                 form={modalForm}
-                name="edit_promo"
+                name="edit_magazine"
                 layout="vertical"
                 requiredMark={false}
                 onFinish={onFinish}
@@ -265,7 +265,7 @@ const Promos = () => {
                   <Input
                     size="large"
                     className=""
-                    placeholder="Enter promo code"
+                    placeholder="Enter magazine code"
                   />
                 </Form.Item>
                 <Form.Item name="value" label="Value" rules={[{ required: true, type: "number", message: "Value is required" }]}> 
@@ -325,4 +325,4 @@ const Promos = () => {
   );
 };
 
-export default Promos;
+export default Magazines;

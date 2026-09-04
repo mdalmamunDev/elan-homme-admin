@@ -1,8 +1,8 @@
 import { baseApi } from "../../api/baseApi";
 
-const promosApi = baseApi.injectEndpoints({
+const magazinesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllPromos: builder.query({
+    getAllMagazines: builder.query({
       query: (args) => {
         const params = new URLSearchParams();
         if (args) {
@@ -12,44 +12,44 @@ const promosApi = baseApi.injectEndpoints({
           });
         }
         return {
-          url: "promo",
+          url: "magazine",
           method: "GET",
           params,
         };
       },
-      providesTags: ["promo"],
+      providesTags: ["magazine"],
     }),
-    storePromo: builder.mutation({
+    storeMagazine: builder.mutation({
       query: (payload) => ({
-        url: `promo`,
+        url: `magazine`,
         method: "POST",
         body: payload
       }),
-      invalidatesTags: ["promo"],
+      invalidatesTags: ["magazine"],
     }),
-    updatePromo: builder.mutation({
+    updateMagazine: builder.mutation({
       query: ({ id, payload }) => ({
-        url: `promo/${id}`,
+        url: `magazine/${id}`,
         method: "PUT",
         body: payload
       }),
-      invalidatesTags: ["promo"],
+      invalidatesTags: ["magazine"],
     }),
-    deletePromo: builder.mutation({
+    deleteMagazine: builder.mutation({
       query: ({ id }) => ({
-        url: `promo/${id}`,
+        url: `magazine/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["promo"],
+      invalidatesTags: ["magazine"],
     }),
   }),
 });
 
 export const {
-  useGetAllPromosQuery,
-  useStorePromoMutation,
-  useUpdatePromoMutation,
-  useDeletePromoMutation
-} = promosApi;
+  useGetAllMagazinesQuery,
+  useStoreMagazineMutation,
+  useUpdateMagazineMutation,
+  useDeleteMagazineMutation
+} = magazinesApi;
 
-export default promosApi;
+export default magazinesApi;

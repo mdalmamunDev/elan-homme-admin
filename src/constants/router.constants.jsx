@@ -15,11 +15,12 @@ import { FaArrowCircleDown, FaUserTie } from "react-icons/fa";
 import {
   MdOutlineSecurityUpdateWarning,
 } from "react-icons/md";
-import { FaDollarSign, FaMoneyBill, FaServicestack, FaUserShield } from "react-icons/fa6";
+import { FaDollarSign, FaMoneyBill, FaRegNewspaper, FaServicestack, FaUserShield } from "react-icons/fa6";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import Earnings from "../pages/Main/Earnings/Earnings";
 import GeneralSettings from "../pages/Settings/GeneralSettings";
 import Admins from "../pages/Main/Users/Admins";
+import Magazines from "../pages/Main/Magazines/Magazines";
 
 export const dashboardItems = [
   {
@@ -31,6 +32,12 @@ export const dashboardItems = [
   {
     path: "notifications",
     element: <Notifications />,
+  },
+  {
+    name: "Magazine",
+    path: "/magazine",
+    icon: FaRegNewspaper,
+    element: <Magazines />,
   },
   {
     name: "Users",
@@ -51,11 +58,11 @@ export const dashboardItems = [
     element: <Earnings />,
   },
 
-  // {
-  //   name: "Settings",
-  //   rootPath: "settings",
-  //   icon: RiSettings5Fill,
-  //   children: [
+  {
+    name: "Settings",
+    rootPath: "settings",
+    icon: RiSettings5Fill,
+    children: [
       {
         name: "Profile",
         path: "settings/profile",
@@ -102,6 +109,6 @@ export const dashboardItems = [
         path: "settings/about-us/edit",
         element: <EditAboutUs />,
       },
-  //   ],
-  // },
+    ],
+  },
 ];
