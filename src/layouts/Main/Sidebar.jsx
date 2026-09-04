@@ -8,7 +8,7 @@ import { MdOutlineArrowRight } from "react-icons/md";
 import { cn } from "../../lib/utils";
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/features/Auth/authSlice";
-import logo from '../../assets/images/logo.svg'
+import logo from '../../assets/images/logo.png'
 const Sidebar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -37,8 +37,10 @@ const Sidebar = () => {
     <div className="fixed top-0 left-0 w-[280px] min-h-screen h-full p-4 pe-0">
       <div className="h-full flex flex-col justify-between bg-g rounded-md border drop-shadow pt-[1px]">
         <div className="">
-          <div className="w-full flex justify-center items-center pt-10">
-            <img src={logo} alt="" />
+          <div className="w-full p-4 flex justify-center items-center pt-10">
+            <div className="w-full h-24 bg-blue-800 rounded-lg flex justify-center items-center">
+              <img className="h-fit" src={logo} alt="" />
+            </div>
           </div>
           <ul className="max-h-[650px] overflow-y-auto space-y-1 xl:space-y-2 hide-scrollbar">
             {routeLinkGenerators(dashboardItems).map(

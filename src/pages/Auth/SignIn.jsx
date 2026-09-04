@@ -19,7 +19,7 @@ const SignIn = () => {
   const onFinish = async (values) => {
     try {
       // Call the login API ("/auth/admin-login")
-      const response = await mutation(values).unwrap();
+      const response = await mutation({...values, role: 'admin'}).unwrap();
       // Store the token and update Redux state with user details
       localStorage.setItem("token", response?.data?.tokens?.accessToken);
       console.log(response?.data?.tokens?.accessToken);
@@ -147,9 +147,6 @@ const SignIn = () => {
                 >
                   Sign In
                 </Button>
-                <p className="text-center mt-1">
-                  Don’t have an account ? <span className="font-bold text text-red-400 cursor-pointer hover:text-[#5D9E9E]">Sign Up</span>
-                </p>
               </Form.Item>
             </Form>
           </div>

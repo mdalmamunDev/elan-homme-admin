@@ -22,7 +22,7 @@
   padding: 14px 12px;
   color: #222222;
   border-radius: 8px;
-  border: 1px solid #5680C0;
+  border: 1px solid #cbd5e1;
   margin-left: 10px;
 }
 
@@ -33,7 +33,7 @@
   background-color: #eff3fa;
   padding: 14px 20px 14px 24px;
   border-radius: 8px;
-  border: 1px solid #5680C0;
+  border: 1px solid #cbd5e1;
 }
 
 @layer utilities {
@@ -52,75 +52,73 @@
 }
 
 .bg-1 {
-  background-color: #5680C0;
+  background-color: #334155;
 }
 
 .bg-2 {
-  background-color: #5680C0;
+  background-color: #475569;
 }
 
 .bg-3 {
-  background-color: #6c87af;
+  background-color: #64748b;
 }
 
 .bg-4 {
-  background-color: #cadeff;
+  background-color: #e2e8f0;
 }
 
 .bg-5 {
-  background-color: #e3eeff;
+  background-color: #f1f5f9;
 }
 
 .bg-s-1 {
-  background-color: #BA63FF;
+  background-color: #2563eb;
 }
 
 .bg-s-2 {
-  background-color: #BA63FF;
+  background-color: #1d4ed8;
 }
 
 
 .text-1 {
-  color: #5680C0;
+  color: #334155;
 }
 
 .text-s-1 {
-  color: #5C58EB;
+  color: #2563eb;
 }
 
 .text-s-2 {
-  color: #7e7aec;
+  color: #1d4ed8;
 }
 
 
 
 .bg-g {
-  background: linear-gradient(to right, #BA63FF, #5C58EB, #56E1E8);
+  background: linear-gradient(#3470f3, #0051ff);
 }
 
 .text-g {
-  background: linear-gradient(to right, #5C58EB, #BA63FF);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #2563eb;
 }
 
 .btn-g {
-  background: linear-gradient(to right, #56E1E8, #5C58EB, #BA63FF);
-  transition: all 0.3s ease;
+  background: #2563eb;
+  transition: background-color 0.2s ease;
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 9999px;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 700;
 }
 
 .btn-g:hover {
-  filter: brightness(1.1);
+  background: #1d4ed8;
 }
 
 :where(.css-dev-only-do-not-override-gpmk94).ant-table-wrapper .ant-table-thead>tr>th {
-  background-color: #4848ff;
+  background-color: #334155;
 }
 
 :where(.css-dev-only-do-not-override-gpmk94).ant-table-wrapper .ant-table-cell,
@@ -141,7 +139,7 @@
 }
 
 :where(.css-dev-only-do-not-override-84d9so).ant-table-wrapper .ant-table-thead>tr>th {
-  background: #5680C0;
+  background: #334155;
 }
 
 .no-arrow-select {
