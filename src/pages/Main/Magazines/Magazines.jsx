@@ -12,9 +12,40 @@ import {
 } from "../../../redux/features/magazine/magazinesApi";
 import DashboardModal from "../../../Components/DashboardModal";
 import { FaPlus, FaTrash, FaEdit } from "react-icons/fa";
+import { PiCameraPlus } from "react-icons/pi";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import LoaderWraperComp from "../../../Components/LoaderWraperComp";
+import { useUploadSingleMutation } from "../../../redux/features/upload/uploadApi";
+
+// Country and currency options for pricing
+const countryOptions = [
+  { label: "Austria (AT)", value: "AT" },
+  { label: "Belgium (BE)", value: "BE" },
+  { label: "Croatia (HR)", value: "HR" },
+  { label: "Cyprus (CY)", value: "CY" },
+  { label: "Estonia (EE)", value: "EE" },
+  { label: "Finland (FI)", value: "FI" },
+  { label: "France (FR)", value: "FR" },
+  { label: "Germany (DE)", value: "DE" },
+  { label: "Greece (GR)", value: "GR" },
+  { label: "Ireland (IE)", value: "IE" },
+  { label: "Italy (IT)", value: "IT" },
+  { label: "Latvia (LV)", value: "LV" },
+  { label: "Lithuania (LT)", value: "LT" },
+  { label: "Luxembourg (LU)", value: "LU" },
+  { label: "Malta (MT)", value: "MT" },
+  { label: "Netherlands (NL)", value: "NL" },
+  { label: "Portugal (PT)", value: "PT" },
+  { label: "Slovakia (SK)", value: "SK" },
+  { label: "Slovenia (SI)", value: "SI" },
+  { label: "Spain (ES)", value: "ES" },
+];
+
+// Only EUR for Eurozone countries
+const currencyOptions = [
+  { label: "EUR", value: "EUR" },
+];
 
 const Magazines = () => {
   const [form] = Form.useForm();
@@ -27,10 +58,12 @@ const Magazines = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
+  const [coverImage, setCoverImage] = useState("");
 
   const [storeMagazine] = useStoreMagazineMutation();
   const [updateMagazine] = useUpdateMagazineMutation();
   const [deleteMagazine] = useDeleteMagazineMutation();
+  const [uploadSingle, { isLoading: uploading }] = useUploadSingleMutation();
 
   // Fetch magazines using searchQuery and currentPage
   const { data: response, isLoading, isError } = useGetAllMagazinesQuery({
@@ -79,7 +112,7 @@ const Magazines = () => {
       dataIndex: "pricing",
       key: "pricing",
       render: (pricing = []) => pricing.length
-        ? pricing.map(({ country, currency, price }) => `${country}: ${currency} ${price}`).join(", ")
+        ? pricing.map(({ country, currency, price }) => `${countryOptions.find((c) => c.value === country)?.label || country}: ${currency} ${price}`).join(", ")
         : "N/A",
     },
     {
@@ -125,25 +158,45 @@ const Magazines = () => {
   const showModal = (record = {}) => {
     setModalData(record);
     setIsModalOpen(true);
+    setCoverImage(record.coverImage || "");
     modalForm.setFieldsValue({
       title: record.title || "",
       slug: record.slug || "",
       description: record.description || "",
-      coverImage: record.coverImage || "",
       isActive: record.isActive ?? true,
       pricing: record.pricing?.length
         ? record.pricing
-        : [{ country: "", currency: "", price: 0 }],
+        : [{ country: "", currency: "EUR", price: 0 }],
     });
+  };
+
+  const handleCoverUpload = async (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      try {
+        const file = e.target.files[0];
+        const res = await uploadSingle(file).unwrap();
+        setCoverImage(res?.data?.filename);
+        toast.success("Cover image uploaded successfully!");
+      } catch (error) {
+        toast.error("Cover image upload failed.");
+      } finally {
+        e.target.value = "";
+      }
+    }
   };
 
   const onFinish = async (values) => {
     try {
+      if (!coverImage) {
+        toast.error("Please upload a cover image.");
+        return;
+      }
+      const payload = { ...values, coverImage };
       if (modalData._id) {
-        await updateMagazine({ id: modalData._id, payload: values });
+        await updateMagazine({ id: modalData._id, payload });
         toast.success("Magazine updated successfully.");
       } else {
-        await storeMagazine(values);
+        await storeMagazine(payload);
         toast.success("Magazine added successfully.");
       }
       setIsModalOpen(false);
@@ -267,6 +320,44 @@ const Magazines = () => {
                 onFinish={onFinish}
                 className="space-y-[24px]"
               >
+                {/* Cover image at the top, centered */}
+                <Form.Item label="Cover image" required>
+                  <label htmlFor="magazineCover" className="cursor-pointer block flex justify-center">
+                    <div className="relative h-[290px] w-[220px] bg-[#f0f1f8] border-2 border-dashed border-[#5680C0] rounded-lg flex flex-col items-center justify-center overflow-hidden">
+                      {uploading && (
+                        <div className="absolute inset-0 bg-[#222222bb] flex flex-col justify-center items-center text-white z-10">
+                          <span className="text-sm">Uploading...</span>
+                        </div>
+                      )}
+                      {coverImage ? (
+                        <img
+                          src={`${import.meta.env.VITE_IMAGE_URL}/${coverImage}`}
+                          alt="Magazine cover"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-[#5680C0]">
+                          <PiCameraPlus size={44} />
+                          <span className="mt-2 text-sm">Click to upload</span>
+                        </div>
+                      )}
+                    </div>
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="magazineCover"
+                    name="coverImage"
+                    multiple={false}
+                    style={{ display: "none" }}
+                    onChange={handleCoverUpload}
+                  />
+                  <p className="text-xs text-gray-500 mt-1 text-center">
+                    {coverImage
+                      ? "Click image to change"
+                      : "Upload a magazine cover image"}
+                  </p>
+                </Form.Item>
                 <Form.Item name="title" label="Title" rules={[{ required: true }]}>
                   <Input size="large" placeholder="Enter magazine title" />
                 </Form.Item>
@@ -276,9 +367,42 @@ const Magazines = () => {
                 <Form.Item name="description" label="Description" rules={[{ required: true }]}>
                   <Input.TextArea rows={3} placeholder="Enter magazine description" />
                 </Form.Item>
-                <Form.Item name="coverImage" label="Cover image" rules={[{ required: true }]}>
-                  <Input size="large" placeholder="Enter cover image path" />
-                </Form.Item>
+                <Form.List name="pricing">
+                  {(fields, { add, remove }) => (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">Pricing</span>
+                        <Button type="dashed" onClick={() => add({ country: "", currency: "EUR", price: 0 })}>
+                          Add price
+                        </Button>
+                      </div>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <div key={key} className="flex items-start gap-2">
+                          <Form.Item {...restField} name={[name, "country"]} rules={[{ required: true }]} className="mb-0 flex-1">
+                            <Select
+                              placeholder="Country"
+                              showSearch
+                              optionFilterProp="label"
+                              options={countryOptions}
+                              className="w-full"
+                            />
+                          </Form.Item>
+                          <Form.Item {...restField} name={[name, "currency"]} rules={[{ required: true }]} className="mb-0 flex-1">
+                            <Select
+                              placeholder="Currency"
+                              options={currencyOptions}
+                              className="w-full"
+                            />
+                          </Form.Item>
+                          <Form.Item {...restField} name={[name, "price"]} rules={[{ required: true, type: "number" }]} className="mb-0 flex-1">
+                            <InputNumber min={0} className="w-full" placeholder="Price" />
+                          </Form.Item>
+                          {fields.length > 1 && <Button type="text" danger onClick={() => remove(name)}>Remove</Button>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Form.List>
                 <Form.Item name="isActive" label="Status" rules={[{ required: true }]}>
                   <Select
                     size="middle"
@@ -290,32 +414,6 @@ const Magazines = () => {
                     ]}
                   />
                 </Form.Item>
-                <Form.List name="pricing">
-                  {(fields, { add, remove }) => (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">Pricing</span>
-                        <Button type="dashed" onClick={() => add({ country: "", currency: "", price: 0 })}>
-                          Add price
-                        </Button>
-                      </div>
-                      {fields.map(({ key, name, ...restField }) => (
-                        <div key={key} className="flex items-start gap-2">
-                          <Form.Item {...restField} name={[name, "country"]} rules={[{ required: true }]} className="mb-0 flex-1">
-                            <Input placeholder="Country" />
-                          </Form.Item>
-                          <Form.Item {...restField} name={[name, "currency"]} rules={[{ required: true }]} className="mb-0 flex-1">
-                            <Input placeholder="Currency" />
-                          </Form.Item>
-                          <Form.Item {...restField} name={[name, "price"]} rules={[{ required: true, type: "number" }]} className="mb-0 flex-1">
-                            <InputNumber min={0} className="w-full" placeholder="Price" />
-                          </Form.Item>
-                          {fields.length > 1 && <Button type="text" danger onClick={() => remove(name)}>Remove</Button>}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </Form.List>
                 <Form.Item>
                   <Button
                     size="large"
