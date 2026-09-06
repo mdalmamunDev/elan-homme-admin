@@ -361,8 +361,30 @@ const Magazines = () => {
                 <Form.Item name="title" label="Title" rules={[{ required: true }]}>
                   <Input size="large" placeholder="Enter magazine title" />
                 </Form.Item>
-                <Form.Item name="slug" label="Slug" rules={[{ required: true }]}>
-                  <Input size="large" placeholder="Enter magazine slug" />
+                <Form.Item
+                  name="slug"
+                  label="Slug"
+                  rules={[
+                    { required: true },
+                    {
+                      pattern: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+                      message: "Slug can only contain lowercase letters, numbers, and hyphens (no spaces or special characters).",
+                    },
+                  ]}
+                >
+                  <Input
+                    size="large"
+                    placeholder="e.g. my-magazine-2025"
+                    onChange={(e) => {
+                      const { value } = e.target;
+                      // Keep only URL-safe characters while typing: lowercase letters, numbers, and hyphens
+                      const sanitized = value
+                        .toLowerCase()
+                        .replace(/[^a-z0-9-]/g, "")
+                        .replace(/-+/g, "-");
+                      modalForm.setFieldValue("slug", sanitized);
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item name="description" label="Description" rules={[{ required: true }]}>
                   <Input.TextArea rows={3} placeholder="Enter magazine description" />
