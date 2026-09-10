@@ -21,6 +21,7 @@ import Earnings from "../pages/Main/Earnings/Earnings";
 import GeneralSettings from "../pages/Settings/GeneralSettings";
 import Admins from "../pages/Main/Users/Admins";
 import Magazines from "../pages/Main/Magazines/Magazines";
+import MagazineDetails from "../pages/Main/Magazines/MagazineDetails";
 
 export const dashboardItems = [
   {
@@ -38,6 +39,11 @@ export const dashboardItems = [
     path: "/magazine",
     icon: FaRegNewspaper,
     element: <Magazines />,
+  },
+  {
+    // no `name` -> hidden from the sidebar; opens magazine details + its issues
+    path: "/magazine/:id",
+    element: <MagazineDetails />,
   },
   {
     name: "Users",

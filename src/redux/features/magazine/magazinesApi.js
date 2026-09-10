@@ -19,6 +19,13 @@ const magazinesApi = baseApi.injectEndpoints({
       },
       providesTags: ["magazine"],
     }),
+    getMagazineById: builder.query({
+      query: (id) => ({
+        url: `magazine/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["magazine"],
+    }),
     storeMagazine: builder.mutation({
       query: (payload) => ({
         url: `magazine`,
@@ -47,6 +54,7 @@ const magazinesApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllMagazinesQuery,
+  useGetMagazineByIdQuery,
   useStoreMagazineMutation,
   useUpdateMagazineMutation,
   useDeleteMagazineMutation

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Input, InputNumber, Select, Table } from "antd";
+import { useNavigate } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 
 import PageHeading from "../../../Components/PageHeading";
@@ -11,43 +12,16 @@ import {
   useUpdateMagazineMutation,
 } from "../../../redux/features/magazine/magazinesApi";
 import DashboardModal from "../../../Components/DashboardModal";
-import { FaPlus, FaTrash, FaEdit } from "react-icons/fa";
+import { FaPlus, FaTrash, FaEdit, FaEye } from "react-icons/fa";
 import { PiCameraPlus } from "react-icons/pi";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import LoaderWraperComp from "../../../Components/LoaderWraperComp";
 import { useUploadSingleMutation } from "../../../redux/features/upload/uploadApi";
-
-// Country and currency options for pricing
-const countryOptions = [
-  { label: "Austria (AT)", value: "AT" },
-  { label: "Belgium (BE)", value: "BE" },
-  { label: "Croatia (HR)", value: "HR" },
-  { label: "Cyprus (CY)", value: "CY" },
-  { label: "Estonia (EE)", value: "EE" },
-  { label: "Finland (FI)", value: "FI" },
-  { label: "France (FR)", value: "FR" },
-  { label: "Germany (DE)", value: "DE" },
-  { label: "Greece (GR)", value: "GR" },
-  { label: "Ireland (IE)", value: "IE" },
-  { label: "Italy (IT)", value: "IT" },
-  { label: "Latvia (LV)", value: "LV" },
-  { label: "Lithuania (LT)", value: "LT" },
-  { label: "Luxembourg (LU)", value: "LU" },
-  { label: "Malta (MT)", value: "MT" },
-  { label: "Netherlands (NL)", value: "NL" },
-  { label: "Portugal (PT)", value: "PT" },
-  { label: "Slovakia (SK)", value: "SK" },
-  { label: "Slovenia (SI)", value: "SI" },
-  { label: "Spain (ES)", value: "ES" },
-];
-
-// Only EUR for Eurozone countries
-const currencyOptions = [
-  { label: "EUR", value: "EUR" },
-];
+import { countryOptions, currencyOptions } from "../../../constants/countryOptions";
 
 const Magazines = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [modalForm] = Form.useForm();
 
@@ -126,6 +100,12 @@ const Magazines = () => {
       key: "action",
       render: (text, record) => (
         <div className="flex gap-x-4">
+          <FaEye
+            size={18}
+            className="cursor-pointer text-s-1"
+            title="View Details"
+            onClick={() => navigate(`/magazine/${record._id}`)}
+          />
           <FaEdit
             size={18}
             className="cursor-pointer text-yellow-600"
