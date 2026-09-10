@@ -20,12 +20,9 @@ const DashboardHome = () => {
 
   const totalUsers = overallData?.data?.totalUsers ?? 0;
   const totalProvider = overallData?.data?.totalProvider ?? 0;
-  const appBalance = overallData?.data?.appBalance ?? 0;
   const chargeBalance = overallData?.data?.chargeBalance ?? 0;
-  const totalWithdrawal = overallData?.data?.totalWithdrawal ?? 0;
   const earningChart = overallData?.data?.earningChart ?? [];
   const recentUsers = overallData?.data?.recentUsers ?? [];
-  const recentPromos = overallData?.data?.recentPromos ?? [];
 
   const homeStatus = [
     {
@@ -36,29 +33,25 @@ const DashboardHome = () => {
         </>
       ),
       icon: earningIcon,
-      gradient: "from-[#8e00ff] to-[#56E1E8]",
+      gradient: "from-[#2563EB] to-[#1E3A8A]", // Blue
     },
     {
-      title: "App Balance",
-      amount: (
-        <>
-          {(appBalance?.toFixed(2) || 0)}${" "}
-        </>
-      ),
+      title: "Total Magazines",
+      amount: totalProvider || 0,
       icon: appBalanceIcon,
-      gradient: "from-[#488686] to-[#2B5151]",
+      gradient: "from-[#0891B2] to-[#164E63]", // Cyan
     },
     {
-      title: "Total Driver",
+      title: "Recent Issues",
       amount: totalProvider || 0,
       icon: driverIcon,
-      gradient: "from-[#E3C97B] to-[#999999]",
+      gradient: "from-[#6366F1] to-[#3730A3]", // Indigo
     },
     {
       title: "Total Users",
       amount: totalUsers || 0,
       icon: userIcon,
-      gradient: "from-[#60A563] to-[#28652B]",
+      gradient: "from-[#0F766E] to-[#134E4A]", // Teal
     },
   ];
 
