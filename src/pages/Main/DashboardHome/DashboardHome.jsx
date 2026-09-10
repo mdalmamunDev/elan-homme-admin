@@ -19,8 +19,9 @@ const DashboardHome = () => {
   const { data: overallData, isLoading, isError } = useGetDashboardQuery({ recentLimit: 20, year: selectedYear, month: selectedMonth });
 
   const totalUsers = overallData?.data?.totalUsers ?? 0;
-  const totalProvider = overallData?.data?.totalProvider ?? 0;
-  const chargeBalance = overallData?.data?.chargeBalance ?? 0;
+  const totalMagazines = overallData?.data?.totalMagazines ?? 0;
+  const totalIssues = overallData?.data?.totalIssues ?? 0;
+  const totalEarnings = overallData?.data?.earnings ?? 0;
   const earningChart = overallData?.data?.earningChart ?? [];
   const recentUsers = overallData?.data?.recentUsers ?? [];
 
@@ -29,7 +30,7 @@ const DashboardHome = () => {
       title: "Earnings",
       amount: (
         <>
-          {chargeBalance?.toFixed(2) || 0}${" "}
+          {totalEarnings?.toFixed(2) || 0}${" "}
         </>
       ),
       icon: earningIcon,
@@ -37,13 +38,13 @@ const DashboardHome = () => {
     },
     {
       title: "Total Magazines",
-      amount: totalProvider || 0,
+      amount: totalMagazines || 0,
       icon: appBalanceIcon,
       gradient: "from-[#0891B2] to-[#164E63]", // Cyan
     },
     {
       title: "Recent Issues",
-      amount: totalProvider || 0,
+      amount: totalIssues || 0,
       icon: driverIcon,
       gradient: "from-[#6366F1] to-[#3730A3]", // Indigo
     },
