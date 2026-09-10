@@ -22,6 +22,7 @@ import GeneralSettings from "../pages/Settings/GeneralSettings";
 import Admins from "../pages/Main/Users/Admins";
 import Magazines from "../pages/Main/Magazines/Magazines";
 import MagazineDetails from "../pages/Main/Magazines/MagazineDetails";
+import Subscriptions from "../pages/Main/Subscriptions/Subscriptions";
 
 export const dashboardItems = [
   {
@@ -62,6 +63,12 @@ export const dashboardItems = [
     path: "earnings",
     icon: FaDollarSign,
     element: <Earnings />,
+  },
+  {
+    name: "Subscriptions",
+    path: "/subscription",
+    icon: FaUserShield,
+    element: <Subscriptions />,
   },
 
   {
